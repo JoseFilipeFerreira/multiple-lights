@@ -1,0 +1,1 @@
+./CGViewer2021 -m models/cornell_box_VI2/cornell_box_VI2.obj -v 278,273,-600 -l 278,273,0

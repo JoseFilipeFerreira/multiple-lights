@@ -1,0 +1,6 @@
+#./CGViewer2021 -m models/cornell/CornellBox-Mirror.obj -v 0,1,4 -l 0,1,0
+#./CGViewer2021 -m models/cornell/CornellBox-Original.obj -v 0,1,4 -l 0,1,0
+#./CGViewer2021 -m models/cornell/CornellBox-Sphere.obj -v 0,1,4 -l 0,1,0
+./CGViewer2021 -m models/cornell/CornellBox-Water.obj -v 0,1,4 -l 0,1,0
+#./CGViewer2021 -m models/cornell/CornellBox-Glossy.obj -v 0,1,4 -l 0,1,0
+#./CGViewer2021 -m models/cornell/CornellBox-Glossy-Floor.obj -v 0,1,4 -l 0,1,0

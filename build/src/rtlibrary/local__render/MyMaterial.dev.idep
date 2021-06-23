@@ -1,0 +1,16 @@
+/home/kb/Documents/MIEI/4_Grade/2_Sem/VI2/ospray-vi2-t4/local-thrparty/install/include/embree3/rtcore.isph
+/home/kb/Documents/MIEI/4_Grade/2_Sem/VI2/ospray-vi2-t4/local-thrparty/install/include/embree3/rtcore_buffer.isph
+/home/kb/Documents/MIEI/4_Grade/2_Sem/VI2/ospray-vi2-t4/local-thrparty/install/include/embree3/rtcore_common.isph
+/home/kb/Documents/MIEI/4_Grade/2_Sem/VI2/ospray-vi2-t4/local-thrparty/install/include/embree3/rtcore_config.h
+/home/kb/Documents/MIEI/4_Grade/2_Sem/VI2/ospray-vi2-t4/local-thrparty/install/include/embree3/rtcore_device.isph
+/home/kb/Documents/MIEI/4_Grade/2_Sem/VI2/ospray-vi2-t4/local-thrparty/install/include/embree3/rtcore_geometry.isph
+/home/kb/Documents/MIEI/4_Grade/2_Sem/VI2/ospray-vi2-t4/local-thrparty/install/include/embree3/rtcore_quaternion.isph
+/home/kb/Documents/MIEI/4_Grade/2_Sem/VI2/ospray-vi2-t4/local-thrparty/install/include/embree3/rtcore_ray.isph
+/home/kb/Documents/MIEI/4_Grade/2_Sem/VI2/ospray-vi2-t4/local-thrparty/install/include/embree3/rtcore_scene.isph
+/home/kb/Documents/MIEI/4_Grade/2_Sem/VI2/ospray-vi2-t4/local-thrparty/install/include/ospray/SDK/OSPConfig.h
+/home/kb/Documents/MIEI/4_Grade/2_Sem/VI2/ospray-vi2-t4/local-thrparty/install/include/ospray/SDK/math/../common/OSPCommon.ih
+/home/kb/Documents/MIEI/4_Grade/2_Sem/VI2/ospray-vi2-t4/local-thrparty/install/include/ospray/SDK/math/math.ih
+/home/kb/Documents/MIEI/4_Grade/2_Sem/VI2/ospray-vi2-t4/local-thrparty/install/include/ospray/SDK/math/vec.ih
+/home/kb/Documents/MIEI/4_Grade/2_Sem/VI2/ospray-vi2-t4/local-thrparty/install/include/ospray/SDK/render/Material.ih
+/home/kb/Documents/MIEI/4_Grade/2_Sem/VI2/ospray-vi2-t4/src/rtlibrary/render/MyMaterial.ih
+/home/kb/Documents/MIEI/4_Grade/2_Sem/VI2/ospray-vi2-t4/src/rtlibrary/render/MyMaterial.ispc

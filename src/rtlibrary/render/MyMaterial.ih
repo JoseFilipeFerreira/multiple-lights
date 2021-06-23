@@ -1,0 +1,16 @@
+// Copyright 2009-2020 Intel Corporation
+// SPDX-License-Identifier: Apache-2.0
+
+#pragma once
+
+#include "ospray/SDK/math/vec.ih"
+#include "ospray/SDK/render/Material.ih"
+// #include "ospray/SDK/texture/Texture2D.ih"
+
+struct MyMaterial
+{
+  Material super;
+  vec3f ks, kd;
+  float d, ns;
+  //Texture2D *map_Kd;
+};

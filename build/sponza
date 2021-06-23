@@ -1,0 +1,1 @@
+./CGViewer2021 -m models/sponza/sponza.obj -v 1000,200,0 -l 0,200,0 -w 768,560

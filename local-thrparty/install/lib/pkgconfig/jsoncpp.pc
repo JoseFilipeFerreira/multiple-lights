@@ -1,0 +1,11 @@
+prefix=/home/kb/Documents/MIEI/4_Grade/2_Sem/VI2/ospray-vi2-t4/local-thrparty/install
+exec_prefix=/home/kb/Documents/MIEI/4_Grade/2_Sem/VI2/ospray-vi2-t4/local-thrparty/install
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: jsoncpp
+Description: A C++ library for interacting with JSON
+Version: 1.9.4
+URL: https://github.com/open-source-parsers/jsoncpp
+Libs: -L${libdir} -ljsoncpp
+Cflags: -I${includedir}

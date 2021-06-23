@@ -1,0 +1,1 @@
+./CGViewer2021 -m models/living_room/living_room.obj -v 0,1,8.5 -l 0,1,0

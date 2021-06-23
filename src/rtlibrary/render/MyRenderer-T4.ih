@@ -1,0 +1,31 @@
+
+
+#include "MyRenderer.ih"
+
+
+/*
+ *  Tutorial 4: renderSample
+ *  Entry point for recursive path tracing
+ *
+void MyRenderer_renderSample_RT (Renderer *uniform,
+                                        FrameBuffer *uniform,
+                                        World *uniform,
+                                        void *uniform,
+                                        varying ScreenSample &);*/
+                                    
+
+vec3f recursive_PT (uniform MyRenderer *uniform,
+                          World *uniform, 
+                          varying RNGState * uniform, Ray,  int);
+
+vec3f secondary_PT (uniform MyRenderer *uniform,
+                        World *uniform model,
+                        varying RNGState * uniform,
+						const DifferentialGeometry &,
+						Ray &, const vec3f, const vec3f, const float, int);
+
+vec3f direct_illumination (uniform MyRenderer *uniform,
+                        World *uniform model,
+                        varying RNGState * uniform,
+						const DifferentialGeometry &,
+						const vec3f, const float);

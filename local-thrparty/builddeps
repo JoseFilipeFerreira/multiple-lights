@@ -1,0 +1,207 @@
+#!/bin/bash 
+
+## BUILD QUESTION WAIT TIME
+WAIT=10
+## FOLDERS WORK and TARGET
+WORK_DIR=`pwd`
+INSTALL_DIR=$WORK_DIR/install
+
+
+## CREATE FOLDERS IF DO NOT EXIST
+
+mkdir -p $WORK_DIR
+
+## SET BINARY AND LIBRARY PATH
+export PATH=$INSTALL_DIR/bin:$PATH
+export LD_LIBRARY_PATH=$INSTALL_DIR/lib64:$INSTALL_DIR/lib:$LD_LIBRARY_PATH
+export DYLD_LIBRARY_PATH=$INSTALL_DIR/lib64:$INSTALL_DIR/lib:$DYLD_LIBRARY_PATH
+
+cd $WORK_DIR
+
+
+read -t $WAIT -n 1 -p "Superbuild OSPray [y]/n? " answer
+[ -z "$answer" ] && answer="yes"  # if 'yes' have to be default choice
+echo ""
+if echo "$answer" | grep -iq "^y" ;then
+
+FILEPATCH=$INSTALL_DIR/lib64/cmake/ospcommon-1.3.1/ospcommon_macros.cmake
+
+if [ "$(uname)" == "Darwin" ]; then
+    FILEPATCH=$INSTALL_DIR/lib/cmake/ospcommon-1.3.1/ospcommon_macros.cmake
+    POPT="-p0"
+elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+    # Do something under GNU/Linux platform
+    if [ -d $INSTALL_DIR/lib/ ]; then
+        FILEPATCH=$INSTALL_DIR/lib/cmake/ospcommon-1.3.1/ospcommon_macros.cmake
+    else
+        FILEPATCH=$INSTALL_DIR/lib64/cmake/ospcommon-1.3.1/ospcommon_macros.cmake
+    fi
+    POPT="-d/ -p0"
+fi
+
+
+cat > ospcommon.patch << EOF
+--- $FILEPATCH	2020-05-15 02:19:39.000000000 +0100
++++ $FILEPATCH	2020-06-10 11:08:45.010866296 +0100
+@@ -137,7 +137,6 @@
+     endif()
+ 
+     if (TBB_FOUND)
+-      list(APPEND OSPCOMMON_TASKING_LIBS ospcommon_tbb)
+       set(OSPCOMMON_TASKING_DEFINITIONS OSPCOMMON_TASKING_TBB)
+     endif()
+   elseif(OSPCOMMON_TASKING_OPENMP)
+EOF
+
+
+
+	cd $WORK_DIR
+	git clone https://github.com/ospray/ospray.git ospray_src
+	cd ospray_src 
+	git checkout release-2.1.x
+	mkdir build 
+	cd build
+
+	cmake ../scripts/superbuild/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR -DBUILD_JOBS=4 -DBUILD_EMBREE_FROM_SOURCE:BOOL=ON -DINSTALL_IN_SEPARATE_DIRECTORIES:BOOL=OFF 
+	cmake --build .
+
+	cd $WORK_DIR
+
+	patch $POPT < ospcommon.patch
+	rm ospcommon.patch
+
+	rm -rf ospray_src
+
+fi
+
+read -t $WAIT -n 1 -p "Install ImGUI [y]/n? " answer
+[ -z "$answer" ] && answer="yes"  # if 'yes' have to be default choice
+echo ""
+if echo "$answer" | grep -iq "^y" ;then
+	## DOWNLOAD, COMPILE AND INSTALL INTEL OpenVKL
+	cd $WORK_DIR
+	#git clone https://github.com/ocornut/imgui.git
+	wget https://github.com/ocornut/imgui/archive/refs/tags/v1.78.tar.gz
+	tar xzf v1.78.tar.gz
+	rm -f v1.78.tar.gz
+	#cp $WORK_DIR/imgui_CMakeLists.txt imgui/CMakeLists.txt
+	cd imgui-1.78
+
+cat > CMakeLists.txt << "EOF"
+cmake_minimum_required(VERSION 3.3)
+project(imgui)
+
+find_package(glfw3)
+find_package(OpenGL)
+find_package(glew CONFIG)
+
+set(root ${CMAKE_CURRENT_SOURCE_DIR})
+set(phdrs ${root}/imgui.h)
+set(hdrs ${root}/imstb_rectpack.h ${root}/imstb_textedit.h ${root}/imstb_truetype.h
+    ${root}/imgui_internal.h)
+set(srcs ${root}/imgui.cpp
+    ${root}/imgui_demo.cpp ${root}/imgui_draw.cpp ${root}/imgui_widgets.cpp)
+
+add_library(imgui STATIC ${phdrs} ${hdrs} ${srcs})
+target_include_directories(imgui PUBLIC
+    $<BUILD_INTERFACE:${root}>
+    $<INSTALL_INTERFACE:include>)
+target_compile_definitions(imgui PUBLIC IMGUI_DISABLE_INCLUDE_IMCONFIG_H)
+set_target_properties(imgui PROPERTIES DEBUG_POSTFIX "d")
+
+set(targets imgui)
+set(headers_to_install ${phdrs})
+
+if(glfw3_FOUND AND OPENGL_FOUND AND glew_FOUND)
+    message(STATUS "OpenGL, GLEW and GLFW found, installing imgui::glfw-gl3-glew.")
+
+    # replace #include gl3w.h with glew.h
+    file(STRINGS examples/opengl3_example/imgui_impl_glfw_gl3.cpp cppcontent)
+    set(cppcontent-glew "")
+    foreach(l ${cppcontent})
+        if(l MATCHES "#include.*GL/gl3w.h")
+            set(l "#include \"GL/glew.h\"")
+        endif()
+        string(APPEND cppcontent-glew "${l}\n")
+    endforeach()
+    set(modified_cpp "${CMAKE_CURRENT_BINARY_DIR}/imgui_impl_glfw_gl3-glew.cpp")
+    file(WRITE "${modified_cpp}" "${cppcontent-glew}")
+
+    add_library(glfw-gl3-glew STATIC
+        "${modified_cpp}"
+        examples/opengl3_example/imgui_impl_glfw_gl3.h
+    )
+    target_include_directories(glfw-gl3-glew PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/examples/opengl3_example>
+        $<INSTALL_INTERFACE:include>)
+    target_link_libraries(glfw-gl3-glew PUBLIC OpenGL::GL GLEW::glew_s glfw imgui)
+    list(APPEND targets glfw-gl3-glew)
+    list(APPEND headers_to_install examples/opengl3_example/imgui_impl_glfw_gl3.h)
+else()
+    if(NOT OPENGL_FOUND)
+        message(STATUS "OpenGL not found, not installing imgui::glfw-gl3-glew.")
+    endif()
+    if(NOT glew_FOUND)
+        message(STATUS "GLEW not found, not installing imgui::glfw-gl3-glew.")
+    endif()
+    if(NOT glfw3_FOUND)
+        message(STATUS "GLFW not found, not installing imgui::glfw-gl3-glew.")
+    endif()
+
+endif()
+
+install(TARGETS ${targets}
+    EXPORT imgui-targets DESTINATION lib)
+install(EXPORT imgui-targets
+    FILE imgui-config.cmake
+    NAMESPACE imgui::
+    DESTINATION lib/cmake/imgui)
+install(FILES ${headers_to_install}
+    DESTINATION include)
+EOF
+
+	mkdir build 
+	cd build
+	cmake .. -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR
+	make -j4 install
+	cd $WORK_DIR
+	rm -rf imgui-1.78
+fi
+
+
+
+
+read -t $WAIT -n 1 -p "Build JSONCPP [y]/n? " answer
+[ -z "$answer" ] && answer="yes"  # if 'yes' have to be default choice
+echo ""
+if echo "$answer" | grep -iq "^y" ;then
+    cd $WORK
+
+    git clone https://github.com/open-source-parsers/jsoncpp.git
+    cd jsoncpp
+    mkdir build
+    cd build
+    cmake .. -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR -DCMAKE_BUILD_TYPE=Release
+    cmake --build .
+    make install
+    cd $WORK
+    rm -rf jsoncpp
+fi
+
+
+cat > $INSTALL_DIR/bin/setenv << EOF
+export TBB_ROOT=$INSTALL_DIR
+export embree_DIR=$INSTALL_DIR
+export ospcommon_DIR=$INSTALL_DIR
+export openvkl_DIR=$INSTALL_DIR
+export ospray_DIR=$INSTALL_DIR
+export imgui_DIR=$INSTALL_DIR
+export jsoncpp_DIR=$INSTALL_DIR
+
+export PATH=$INSTALL_DIR/bin:$PATH
+
+export LD_LIBRARY_PATH=$INSTALL_DIR/lib64:$INSTALL_DIR/lib:$LD_LIBRARY_PATH
+
+export DYLD_LIBRARY_PATH=$INSTALL_DIR/lib64:$INSTALL_DIR/lib:$DYLD_LIBRARY_PATH
+EOF
+

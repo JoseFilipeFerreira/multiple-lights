@@ -1,0 +1,1 @@
+./CGViewer2021 -m models/conference/conference.obj -v 200,300,0 -l 0,300,0 -w 768,560

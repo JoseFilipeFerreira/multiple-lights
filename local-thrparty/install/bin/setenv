@@ -1,0 +1,13 @@
+export TBB_ROOT=/home/kb/Documents/MIEI/4_Grade/2_Sem/VI2/ospray-vi2-t4/local-thrparty/install
+export embree_DIR=/home/kb/Documents/MIEI/4_Grade/2_Sem/VI2/ospray-vi2-t4/local-thrparty/install
+export ospcommon_DIR=/home/kb/Documents/MIEI/4_Grade/2_Sem/VI2/ospray-vi2-t4/local-thrparty/install
+export openvkl_DIR=/home/kb/Documents/MIEI/4_Grade/2_Sem/VI2/ospray-vi2-t4/local-thrparty/install
+export ospray_DIR=/home/kb/Documents/MIEI/4_Grade/2_Sem/VI2/ospray-vi2-t4/local-thrparty/install
+export imgui_DIR=/home/kb/Documents/MIEI/4_Grade/2_Sem/VI2/ospray-vi2-t4/local-thrparty/install
+export jsoncpp_DIR=/home/kb/Documents/MIEI/4_Grade/2_Sem/VI2/ospray-vi2-t4/local-thrparty/install
+
+export PATH=/home/kb/Documents/MIEI/4_Grade/2_Sem/VI2/ospray-vi2-t4/local-thrparty/install/bin:/home/kb/Documents/MIEI/4_Grade/2_Sem/VI2/ospray-vi2-t4/local-thrparty/install/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/opt/cuda/bin:/opt/cuda/nsight_compute:/opt/cuda/nsight_systems/bin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/home/kb/.local/bin:/home/kb/.local/bin:/home/kb/.local/bin:/home/kb/.local/bin
+
+export LD_LIBRARY_PATH=/home/kb/Documents/MIEI/4_Grade/2_Sem/VI2/ospray-vi2-t4/local-thrparty/install/lib64:/home/kb/Documents/MIEI/4_Grade/2_Sem/VI2/ospray-vi2-t4/local-thrparty/install/lib:/home/kb/Documents/MIEI/4_Grade/2_Sem/VI2/ospray-vi2-t4/local-thrparty/install/lib64:/home/kb/Documents/MIEI/4_Grade/2_Sem/VI2/ospray-vi2-t4/local-thrparty/install/lib:
+
+export DYLD_LIBRARY_PATH=/home/kb/Documents/MIEI/4_Grade/2_Sem/VI2/ospray-vi2-t4/local-thrparty/install/lib64:/home/kb/Documents/MIEI/4_Grade/2_Sem/VI2/ospray-vi2-t4/local-thrparty/install/lib:/home/kb/Documents/MIEI/4_Grade/2_Sem/VI2/ospray-vi2-t4/local-thrparty/install/lib64:/home/kb/Documents/MIEI/4_Grade/2_Sem/VI2/ospray-vi2-t4/local-thrparty/install/lib:

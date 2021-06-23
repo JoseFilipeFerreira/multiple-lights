@@ -1,0 +1,5 @@
+# Hashes of file build rules.
+148b1e993b7536d6dd41cab13654b416 src/rtlibrary/local__render/MyMaterial.dev.o
+b422f47da17e0c336a70574a5f567078 src/rtlibrary/local__render/MyRenderer-T2.dev.o
+05e8d16d2e12c8e100898137bbca6dc0 src/rtlibrary/local__render/MyRenderer-T4.dev.o
+74b17bb2b91e30ab3174d10fd5352e81 src/rtlibrary/local__render/MyRenderer.dev.o

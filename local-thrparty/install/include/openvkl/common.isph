@@ -1,0 +1,33 @@
+// Copyright 2019 Intel Corporation
+// SPDX-License-Identifier: Apache-2.0
+
+#pragma once
+
+#if !defined(VKL_API)
+#define VKL_API extern "C" unmasked
+#endif
+
+#if !defined(VKL_FORCEINLINE)
+#define VKL_FORCEINLINE inline
+#endif
+
+struct ManagedObject
+{
+};
+
+typedef ManagedObject *uniform VKLObject;
+
+struct vkl_vec3f
+{
+  float x, y, z;
+};
+
+struct vkl_range1f
+{
+  float lower, upper;
+};
+
+struct vkl_box3f
+{
+  vkl_vec3f lower, upper;
+};

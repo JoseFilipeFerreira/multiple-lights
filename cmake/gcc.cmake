@@ -1,0 +1,20 @@
+message("GNU compiler selected")
+
+SET(CONFIG_COMPILER__FLAGS__SSSE3 "-msse3")
+SET(CONFIG_COMPILER__FLAGS__SSSE3 "-mssse3")
+SET(CONFIG_COMPILER__FLAGS__SSE41 "-msse4.1")
+SET(CONFIG_COMPILER__FLAGS__SSE42 "-msse4.2")
+SET(CONFIG_COMPILER__FLAGS__AVX   "-mavx -fabi-version=6")
+SET(CONFIG_COMPILER__FLAGS__AVX2  "-mf16c -mavx2 -mfma -mlzcnt -mabm -mbmi -mbmi2 -fabi-version=6")
+SET(CONFIG_COMPILER__FLAGS__AVX512KNL "-mavx512f -mavx512pf -mavx512er -mavx512cd")
+SET(CONFIG_COMPILER__FLAGS__AVX512SKX "-mavx512f -mavx512dq -mavx512cd -mavx512bw -mavx512vl")
+
+# SET(CMAKE_CXX_FLAGS "-fPIC")
+# SET(CMAKE_CXX_FLAGS_DEBUG          "-g -O3 -ftree-ter")
+# SET(CMAKE_CXX_FLAGS_RELEASE        "-DNDEBUG    -O3 -Wstrict-aliasing=0 -ffast-math ")
+# SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-DNDEBUG -g -O3 -Wstrict-aliasing=0 -ffast-math ")
+# SET(CMAKE_EXE_LINKER_FLAGS "")
+
+# IF (NOT RTCORE_EXPORT_ALL_SYMBOLS)
+#   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility-inlines-hidden -fvisibility=hidden")
+# ENDIF()

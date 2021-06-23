@@ -1,0 +1,36 @@
+// Copyright 2009-2019 Intel Corporation
+// SPDX-License-Identifier: Apache-2.0
+
+#pragma once
+
+//#include "ospray/SDK/fb/FrameBuffer.ih"
+#include "ospray/SDK/lights/Light.ih"
+#include "ospray/SDK/math/vec.ih"
+
+#include "ospray/SDK/render/Renderer.ih"
+
+//#include "ospray/SDK/render/util.ih"
+
+
+struct MyRenderer
+{
+  Renderer super;
+  const uniform Light *uniform *uniform lights;
+  uint32 numLights;
+  uniform vec3f ambColor;    // ambient term
+};
+
+export void MyRenderer_set (void *uniform,
+                  void **uniform, const uniform uint32, uniform vec3f &);
+
+
+/*
+ *  Tutorial : renderSample
+ *  Entry point for any of the T2 or T3 tutorial
+ */
+void MyRenderer_renderSample_RT (Renderer *uniform,
+                                        FrameBuffer *uniform,
+                                        World *uniform,
+                                        void *uniform,
+                                        varying ScreenSample &);
+

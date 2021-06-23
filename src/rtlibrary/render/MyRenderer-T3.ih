@@ -1,0 +1,32 @@
+
+
+#include "MyRenderer.ih"
+
+
+/*
+ *  Tutorial 2: renderSample
+ *  Entry point for recursive Whitted RT
+ *
+void MyRenderer_renderSample_RT (Renderer *uniform,
+                                        FrameBuffer *uniform,
+                                        World *uniform,
+                                        void *uniform,
+                                        varying ScreenSample &);*/
+                                    
+
+vec3f recursive_distributedRT (uniform MyRenderer *uniform,
+                          World *uniform, 
+                          varying RNGState * uniform, Ray,  int);
+
+vec3f secondary_classic (uniform MyRenderer *uniform,
+                        World *uniform model,
+                        varying RNGState * uniform,
+						const DifferentialGeometry &,
+						Ray &, const vec3f, const float ns,
+                        int);
+
+vec3f direct_illumination (uniform MyRenderer *uniform,
+                        World *uniform model,
+                        varying RNGState * uniform,
+						const DifferentialGeometry &,
+						const vec3f, const float);
