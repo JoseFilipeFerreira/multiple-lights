@@ -59,52 +59,83 @@ void defineLightsConference (MyRenderer *self){
 	}
 }
 
+#define ONE_LIGHT 0
+#define FOUR_LIGHTS 1
+#define MANY_LIGHTS 2
 
 // sets the lights for the cornell box (VI2)
 void defineLightsCornell (MyRenderer *self){
-	int l;
+	
 	// get the light sources to make them available for ispc context
 	self->lightArray.clear();
 
-	if (1) {  // 4 light sources
+// #ifdef ONE_LIGHT
+// 	const int chosen1 = MANY_LIGHTS;
+// #endif
+	const int chosen = MANY_LIGHTS;
 
-	for (l=0 ; l<4; l++) {
+	if(chosen == FOUR_LIGHTS)
+	{
+		for (int l = 0 ; l < 4 ; ++l) {
 
-	  	QuadLight *qLight=  new QuadLight(); 
-  	  	qLight->setParam("color", vec3f(1.f,1.f,1.f));
-  	  	qLight->setParam("intensity", 10.f);
-		switch (l) {
-			case 0:
-  				qLight->setParam("position", vec3f(120., 548., 120.));
-				break;
-			case 1:
-  				qLight->setParam("position", vec3f(400., 548., 120.));
-				break;
-			case 2:
-  				qLight->setParam("position", vec3f(120., 548., 400.));
-				break;
-			case 3:
-  				qLight->setParam("position", vec3f(400., 548., 400.));
-				break;
+		  	QuadLight *qLight=  new QuadLight(); 
+  		  	qLight->setParam("color", vec3f(1.f,1.f,1.f));
+  		  	qLight->setParam("intensity", 10.f);
+			switch (l) {
+				case 0:
+  					qLight->setParam("position", vec3f(120., 548., 120.));
+					break;
+				case 1:
+  					qLight->setParam("position", vec3f(400., 548., 120.));
+					break;
+				case 2:
+  					qLight->setParam("position", vec3f(120., 548., 400.));
+					break;
+				case 3:
+  					qLight->setParam("position", vec3f(400., 548., 400.));
+					break;
 
+			}
+  			qLight->setParam("edge1", vec3f(40., 0., 0.));
+  			qLight->setParam("edge2", vec3f(0., 0., 40.));
+  			qLight->commit();
+  			Light *light= (Light *) qLight; 
+			self->lightArray.push_back(light->getIE());
 		}
-  		qLight->setParam("edge1", vec3f(40., 0., 0.));
-  		qLight->setParam("edge2", vec3f(0., 0., 40.));
-  		qLight->commit();
-  		Light *light= (Light *) qLight; 
+	}
+	else if(chosen == ONE_LIGHT)
+	{
+		QuadLight *qLight=  new QuadLight(); 
+		qLight->setParam("color", vec3f(1.f,1.f,1.f));
+		qLight->setParam("intensity", 10.f);
+		qLight->setParam("position", vec3f(110., 548., 110.));
+		qLight->setParam("edge1", vec3f(20., 0., 0.));
+		qLight->setParam("edge2", vec3f(0., 0., 20.));
+		qLight->commit();
+		Light *light= (Light *) qLight; 
 		self->lightArray.push_back(light->getIE());
 	}
-
-	} else { // 1 large light source
-	  	QuadLight *qLight=  new QuadLight(); 
-  	  	qLight->setParam("color", vec3f(1.f,1.f,1.f));
-  	  	qLight->setParam("intensity", 10.f);
-  		qLight->setParam("position", vec3f(200., 548., 200.));
-  		qLight->setParam("edge1", vec3f(200., 0., 0.));
-  		qLight->setParam("edge2", vec3f(0., 0., 200.));
-  		qLight->commit();
-  		Light *light= (Light *) qLight; 
-		self->lightArray.push_back(light->getIE());
+	else if(chosen == MANY_LIGHTS)
+	{
+		const int WIDTH = 4;
+		const float LIGHT_SIZE = 10.;
+		
+		for (int i = 0 ; i < WIDTH ; ++i)
+		{
+			for (int j = 0 ; j < WIDTH ; ++j)
+			{
+				const float stride = (540. - 110.) / WIDTH;
+				QuadLight *qLight=  new QuadLight(); 
+				qLight->setParam("color", vec3f(1.f,1.f,1.f));
+				qLight->setParam("intensity", 10.f);
+				qLight->setParam("position", vec3f(110. + i*stride, 548., 110. + j*stride)); 
+				qLight->setParam("edge1", vec3f(LIGHT_SIZE, 0., 0.));
+				qLight->setParam("edge2", vec3f(0., 0., LIGHT_SIZE));
+				qLight->commit();
+				Light *light= (Light *) qLight; 
+				self->lightArray.push_back(light->getIE());
+			}
+		}
 	}
 }
 

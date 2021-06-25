@@ -14,9 +14,9 @@
 vec3f direct_illumination (uniform MyRenderer *uniform self,
             World *uniform model,
             varying RNGState * uniform rng,
-						const DifferentialGeometry &dg,
-						const vec3f Kd,
-						const float Raytime) {
+			const DifferentialGeometry &dg,
+			const vec3f Kd,
+			const float Raytime) {
 
   vec3f color = make_vec3f(0.f);
   
@@ -26,7 +26,7 @@ vec3f direct_illumination (uniform MyRenderer *uniform self,
 
     //const vec2f s = make_vec2f(0.0f); // sample center of area lights
     // stochastically sample the area lights
-    const vec2f s = make_vec2f(frandom(rng),frandom(rng)); 
+    const vec2f s = make_vec2f(frandom(rng),frandom(rng));
     
     const Light_SampleRes light = l->sample(l, dg, s);
 
@@ -54,11 +54,170 @@ vec3f direct_illumination (uniform MyRenderer *uniform self,
     }  // light weight > 0
   } // for all lights
 
-
-
   return (color);
 }
 
+
+/******
+*
+*  Does uniform stochastic direct illumination
+*
+************/
+
+vec3f direct_illumination_1L (uniform MyRenderer *uniform self,
+            World *uniform model,
+            varying RNGState * uniform rng,
+			const DifferentialGeometry &dg,
+			const vec3f Kd,
+			const float Raytime) {
+
+    vec3f color = make_vec3f(0.f);
+
+    const float light_pdf = 1. / self->numLights;
+
+    //unsigned int chosen_idx = random(rng) % self->numLights;
+    int chosen_idx = (int)(floor(frandom(rng) * self->numLights));
+
+    //calculate shading for all lights
+    //const uniform Light* uniform l = self->lights[chosen_idx];
+    const Light* l = self->lights[chosen_idx];
+
+    //const vec2f s = make_vec2f(0.0f); // sample center of area lights
+    // stochastically sample the area lights
+    const vec2f s = make_vec2f(frandom(rng),frandom(rng)); 
+
+    foreach_unique(ul in l)
+    {
+        Light_SampleRes light = ul->sample(ul, dg, s);
+        if (reduce_max(light.weight) > 0.f) {   // any potential contribution?
+            float cosNL = dot(light.dir, dg.Ns);  // cosine between lighting dir and normal
+            if (!(cosNL < 0.0f))
+            {
+                const vec3f diffuse = Kd * cosNL;
+                const vec3f light_contrib = (diffuse * light.weight) / light_pdf;
+            
+                const float max_contrib = reduce_max(light_contrib);
+                if (max_contrib > 0.f)
+                {
+                    Ray shadowRay;
+                    vec3f P = dg.P;
+                    if (dot(dg.Ng, light.dir) < 0.0f)
+                        P = P - (2.f * dg.epsilon) * dg.Ng;
+            
+                    setRay(shadowRay, P, light.dir, 0.f, light.dist, Raytime);
+            
+                    traceRay(model,shadowRay);
+                    if (shadowRay.geomID < 0) {    // no intersection, light source is visible
+                        color = color + light_contrib;
+                    }
+                }
+            } // light on the other side
+        }  // light weight > 0
+    } 
+    
+    return (color);
+    //const Light_SampleRes light = l->sample(l, dg, s);
+}
+
+
+/******
+*
+*  Does weighted stochastic direct illumination
+*
+************/
+
+float my_abs(vec3f vec)
+{
+    return sqrt(vec.x*vec.x + vec.y*vec.y + vec.z*vec.z);
+}
+
+vec3f direct_illumination_w1L (uniform MyRenderer *uniform self,
+            World *uniform model,
+            varying RNGState * uniform rng,
+			const DifferentialGeometry &dg,
+			const vec3f Kd,
+			const float Raytime) {
+
+    vec3f color = make_vec3f(0.f);
+
+    const vec2f s = make_vec2f(frandom(rng),frandom(rng)); 
+
+    //uniform float* uniform lights_weigths = malloc64(sizeof(float)*self->numLights);
+    //uniform float* uniform lights_pdf = malloc64(sizeof(float)*self->numLights);
+    //uniform float* uniform lights_cdf = malloc64(sizeof(float)*self->numLights);
+    
+    float lights_weigths[100];
+    float lights_pdf[100];
+    float lights_cdf[100];
+
+    float sum_weigths = 0.;
+
+    // Compute sum of all weigths
+    for(uniform int i = 0; self->lights && i < self->numLights ; ++i)
+    {
+        const uniform Light* uniform l = self->lights[i];
+        Light_SampleRes light = l->sample(l, dg, s);
+        sum_weigths += my_abs(light.weight);
+        lights_weigths[i] = my_abs(light.weight);
+    }
+
+    // Compute lights PDF's and CDF's
+    // AND Sample random value and get gorresponding light from cdf
+    float tmp = frandom(rng);
+    int chosen_idx;
+    float accum = 0.;
+    for(uniform int i = 0; self->lights && i < self->numLights ; ++i)
+    {
+        lights_pdf[i] = lights_weigths[i] / sum_weigths;
+        accum += lights_pdf[i];
+        lights_cdf[i] = accum;
+        if(lights_cdf[i] >= tmp)
+        {
+            chosen_idx = i;
+            break;
+        }
+    }
+
+
+    // Compute shading for selected light
+    const Light* l = self->lights[chosen_idx];
+
+    //const vec2f s = make_vec2f(0.0f); // sample center of area lights
+    // stochastically sample the area lights
+
+    foreach_unique(ul in l)
+    {
+        Light_SampleRes light = ul->sample(ul, dg, s);
+        if (reduce_max(light.weight) > 0.f) {   // any potential contribution?
+            float cosNL = dot(light.dir, dg.Ns);  // cosine between lighting dir and normal
+            if (!(cosNL < 0.0f))
+            {
+                const vec3f diffuse = Kd * cosNL;
+                const vec3f light_contrib = (diffuse * light.weight) / lights_pdf[chosen_idx];
+            
+                const float max_contrib = reduce_max(light_contrib);
+                if (max_contrib > 0.f)
+                {
+                    Ray shadowRay;
+                    vec3f P = dg.P;
+                    if (dot(dg.Ng, light.dir) < 0.0f)
+                        P = P - (2.f * dg.epsilon) * dg.Ng;
+            
+                    setRay(shadowRay, P, light.dir, 0.f, light.dist, Raytime);
+            
+                    traceRay(model,shadowRay);
+                    if (shadowRay.geomID < 0)
+                    { // no intersection, light source is visible
+                        color = color + light_contrib;
+                    }
+                }
+            } // light on the other side
+        }  // light weight > 0
+    } 
+    
+    return (color);
+    //const Light_SampleRes light = l->sample(l, dg, s);
+}
 
 
 /******
@@ -222,7 +381,7 @@ vec3f recursive_PT (uniform MyRenderer *uniform self,
     //color = color + ambient_contribution;
 
     // direct illumination
-    color = color + direct_illumination (self, model, rng, dg, Kd, ray.time);
+    color = color + direct_illumination_w1L(self, model, rng, dg, Kd, ray.time);
 
     
     // secondary ray : constant MAX DEPTH
