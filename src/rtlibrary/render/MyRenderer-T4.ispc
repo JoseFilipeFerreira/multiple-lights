@@ -4,8 +4,6 @@
 #include "ospray/SDK/common/World.ih"
 #include "ospray/SDK/math/sampling.ih"
 
-#include <stdio.h>
-
 
 /******
 *
