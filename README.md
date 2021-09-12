@@ -1,4 +1,12 @@
-# Computer Graphics Spring 2021
+# multiple-lights
+
+Exploring different approaches to optimize the rendering of scenes with multiple lights
+with the objective of improving rendering time while minimizing noise. (VI2 assignment)
+
+The explored methods were:
+* pooling all lights from the scene
+* use a uniform distribution to fetch one random light per point
+* choose a random light based on how close it is to the point being calculated
 
 ## Projects Dependencies
 
@@ -19,15 +27,6 @@ It will also generate a enviroment variable script that will setup the build env
 source local-thrparty/install/bin/setenv
 ```
 
-## Scene description
-
-Use WaveFront OBJ format to describe the scene, however to extend the material capabilities a json format was created.
-
-The JSON material names must match the material names on the OBJ and mtl file. Each material describes a materital type from ospray and the respective parameters. ( [OSPray Materials](https://www.ospray.org/documentation.html#materials) )
-
-
-
-
 ## Building the project Linux/MacOs
 
 Make sure the enviroment variables defined in "setenv" point to the proper install paths. On windows, make sure they are defined on the proper place.
@@ -39,52 +38,20 @@ cmake ..
 ```
 
 Builing the project
-
-```
-cmake --build .
-```
-
-or
 ```
 make
 ```
-
-## Building the project on Windows
-
-You can use the CMake to generate Visual Studio Projects.
-
-Make sure the enviroment variables defined in "setenv" point to the proper install paths. On windows, make sure they are defined on the proper place.
-
-Here is a tutorial to use CMake Projects in Visual Studio. (https://docs.microsoft.com/en-us/cpp/build/cmake-projects-in-visual-studio?view=vs-2019)
-
 
 ## Runing the exemple
 ```
 ./CGViewer2021 -m models/cornell/CornellBox-Water.obj
 ```
 
-## Other Notes
+## Authors
+* [Jose Filipe Ferreira](https://github.com/JoseFilipeFerreira)
+* [Jorge Mota](https://github.com/K1llByte)
 
-#### Editor
+## License
 
-This project has the proper Visual Studio Code settings, assuming that you have setup the enviroment variables in setenv (if you don's use the builddeps script, the end of the script here the setenv is created).
-
-#### CMake building framework
-
-If you are not familiar with CMake, please take sometime. It will help when adding source files to the application builing step. 
-
-
-
-# TODO
-
-[ ] - Add camera position and directiom
-
-[ ] - Add texture loading
-
-[ ] - Add camera controls to gui
-
-[ ] - Add image size parameter command line
-
-[ ] - Add command line render parameters
-
-[ ] - Add render to image file
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
+for details
